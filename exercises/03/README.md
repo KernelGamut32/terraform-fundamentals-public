@@ -3,7 +3,7 @@
 For this exercise, we will:
 
 * Initialize our project directory
-* run a plan to understand why planning makes sense (and should always be a part of your terraform flow)
+* Run a plan to understand why planning makes sense (and should always be a part of your terraform flow)
 * Actually apply our infrastructure, in this case a single object within an `s3` bucket
 * Destroy what we created
 
@@ -25,7 +25,7 @@ For this exercise, we will:
  ```
  ...
 
- An execution plan has been generated and is shown below.
+An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
   + create
 
@@ -34,7 +34,7 @@ Resource actions are indicated with the following symbols:
   # aws_s3_bucket_object.user_student_alias_object will be created
   + resource "aws_s3_bucket_object" "user_student_alias_object" {
       + acl                    = "private"
-      + bucket                 = "dws-di-..."
+      + bucket                 = "devint-..."
       + content                = "This bucket is reserved for ..."
       + content_type           = (known after apply)
       + etag                   = (known after apply)
@@ -49,13 +49,13 @@ Resource actions are indicated with the following symbols:
 
  ------------------------------------------------------------------------
 
- Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
 can't guarantee that exactly these actions will be performed if
 "terraform apply" is subsequently run.
  ```
 
- * from the above output, we can see that terraform will create a single S3 object in our bucket
- * an important line to note is the one beginning with "Plan:"–1 resource will be created, 0 will be changed, and 0 destroyed
+ * From the above output, we can see that terraform will create a single S3 object in our bucket
+ * An important line to note is the one beginning with "Plan:"–1 resource will be created, 0 will be changed, and 0 destroyed
 <br/><br/>
 1. Let's go ahead and let Terraform create the S3 bucket object. Try a different method of passing in your `student_alias`
 variable when running the apply:
@@ -65,8 +65,8 @@ variable when running the apply:
  ```
 
  * Terraform will execute another plan, and then ask you if you would like to apply the changes
- * type "yes" to approve, then let it do its magic
- * your output should look like the following:
+ * Type "yes" to approve, then let it do its magic
+ * Your output should look like the following:
 
  ```
 An execution plan has been generated and is shown below.
@@ -78,7 +78,7 @@ Resource actions are indicated with the following symbols:
   # aws_s3_bucket_object.user_student_alias_object will be created
   + resource "aws_s3_bucket_object" "user_student_alias_object" {
       + acl                    = "private"
-      + bucket                 = "dws-di-..."
+      + bucket                 = "devint-..."
       + content                = "This bucket is reserved for ..."
       + content_type           = (known after apply)
       + etag                   = (known after apply)
@@ -144,7 +144,7 @@ resource "aws_s3_bucket_object" "user_student_alias_object" {
     # aws_s3_bucket_object.user_student_alias_object will be updated in-place
     ~ resource "aws_s3_bucket_object" "user_student_alias_object" {
         acl           = "private"
-        bucket        = "dws-di-..."
+        bucket        = "devint-..."
       ~ content       = "This bucket is reserved for ..." -> "This bucket is reserved for ... ****ONLY****"
         content_type  = "binary/octet-stream"
         etag          = "94e32327b8007fa215f3a9edbda7f68c"
@@ -197,7 +197,7 @@ are removed and in the order that their dependencies require.
   # aws_s3_bucket_object.user_student_alias_object will be destroyed
   - resource "aws_s3_bucket_object" "user_student_alias_object" {
       - acl           = "private" -> null
-      - bucket        = "dws-di-chucky" -> null
+      - bucket        = "devint-chucky" -> null
       - content       = "This bucket is reserved for ... ****ONLY****" -> null
       - content_type  = "binary/octet-stream" -> null
       - etag          = "c7e49348083281f9dd997923fe6084b7" -> null

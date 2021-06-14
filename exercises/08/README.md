@@ -194,8 +194,8 @@ Complex types are made up of mostly new types and capabilities in v0.12.
  ```
 
  #### Tuples
- * you'll probably use tuples the least of any of the types
- * the key takeaway is that it's a list with mixed, strict type constraints
+ * You'll probably use tuples the least of any of the types
+ * The key takeaway is that it's a list with mixed, strict type constraints
 
  ```hcl
  variable "my_tuple" {

@@ -1,7 +1,7 @@
 # Exercise #7: Error Handling and Troubleshooting
 
-* let's look at what the different types of errors we discussed look like
-* in each part of this exercise you'll get a feel for some common error scenarios and how to identify them
+* Let's look at what the different types of errors we discussed look like
+* In each part of this exercise you'll get a feel for some common error scenarios and how to identify them
 
 ### Process Errors
 
@@ -34,7 +34,7 @@ in and available locally within your project. If we don't run `init` first, none
 
 How about another process error example?
 
-2. the `apply` command has an argument that tells it
+2. The `apply` command has an argument that tells it
 not to prompt you for input variables: `-input=[true|false]`. Let's try running `apply` with that argument set to false:
 
  ```bash

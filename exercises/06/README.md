@@ -2,8 +2,8 @@
 
 Terraform is *ALL* about modules.  Every terraform working directory is really just a module that could be reused by others. This is one of the key capabilities of Terraform.
 
-* we are going to modularize the code we've been working with during this workshop
-* instead of constantly redeclaring everything, we are just going to reference the module that we've created and see if it works
+* We are going to modularize the code we've been working with during this workshop
+* Instead of constantly redeclaring everything, we are just going to reference the module that we've created and see if it works
 
 ### Creating a Module
 
@@ -40,10 +40,10 @@ Terraform is *ALL* about modules.  Every terraform working directory is really j
 
 1. Run init and apply.
 
- * notice that terraform manages each resource as if there is no module division
- * that is, the resources are bucketed into one big change list, but under the hood Terraform's dependency graph will show some separation
- * it's difficult, for example, to create dependencies between two resources that are in different modules
- * you can, however, use interpolation to create a variable dependency between two modules at the root level, ensuring one is created before the other
+ * Notice that terraform manages each resource as if there is no module division
+ * That is, the resources are bucketed into one big change list, but under the hood Terraform's dependency graph will show some separation
+ * It's difficult, for example, to create dependencies between two resources that are in different modules
+ * You can, however, use interpolation to create a variable dependency between two modules at the root level, ensuring one is created before the other
 <br/><br/>
  Specific applications where direct resource dependency is required necessitate grouping those resources
  into a single module or project.

@@ -1,7 +1,7 @@
 # Exercise #2: Using Variables
 
 ## Goals
-* understand the *four* different ways to declare variables in terraform
+* Understand the *four* different ways to declare variables in terraform
 
 ### Let's look at our `variables.tf` file...
 
@@ -22,10 +22,10 @@ variable "student_alias" {
 
 ### What is the value of this variable?
 
-* there is no "value" parameter in the syntax for the variable object
-* variables stanzas are not meant to be inputs, but rather placeholders for input that can be references in our Terraform code
-* variable stanzas can be used this way by simply setting the `default` to the desired value
- * but this negates the benefits of Terraform's native re-usability, instead try...
+* There is no "value" parameter in the syntax for the variable object
+* Variable stanzas are not meant to be inputs, but rather placeholders for input that can be references in our Terraform code
+* Variable stanzas can be used this way by simply setting the `default` to the desired value
+* But this negates the benefits of Terraform's native re-usability, instead try...
 
 
 ### Let's get started
@@ -51,13 +51,13 @@ HCL that defines values for variables for that working directory.
 
 Let's try a few things:
 
-1. create a file called `terraform.tfvars` in this directory
-1. insert the following code into it:
+1. Create a file called `terraform.tfvars` in this directory
+1. Insert the following code into it:
 ```hcl
 # swap "[your alias]" with your provided alias
 student_alias = "[your alias]"
 ```
-1. then run this in the same directory
+1. Then run this in the same directory
 ```bash
 terraform plan
 ```
@@ -76,14 +76,14 @@ terraform plan
 Another method you can use is to insert variables via the CLI.  This allows for quick variable substitution and
 testing because values entered via CLI override values from other methods.
 
-1. run the following in this working directory (if you were able to complete the previous), swapping for your
+1. Run the following in this working directory (if you were able to complete the previous), swapping for your
 identifier like before.
 
  ```bash
  terraform plan -var 'student_alias=[your alias]'
  ```
 
- (you can try using a different identifier to see if it worked–as before, you should be able to see the
+ (You can try using a different identifier to see if it worked–as before, you should be able to see the
 new identifier in the plan output)
 
 ### 3) Using Environment variables
@@ -96,7 +96,7 @@ Environment variables can be used to set the value of an input variable=. The na
  TF_VAR_student_alias=[your alias] terraform plan
  ```
 
- (this can be a useful method for secrets handling, or other automated use cases)
+ (This can be a useful method for secrets handling, or other automated use cases)
 
 ### 4) Prompt for a variable value
 

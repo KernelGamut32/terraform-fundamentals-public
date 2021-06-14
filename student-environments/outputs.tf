@@ -12,4 +12,5 @@ output "test_access_keys" {
 
 output "test_secret_keys" {
   value = [aws_iam_access_key.tests[*].secret]
+  sensitive = true
 }
