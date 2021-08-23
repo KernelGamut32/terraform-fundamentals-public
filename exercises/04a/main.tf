@@ -5,10 +5,17 @@
 # and you'll see that state is maintained across both machines.
 
 terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
+  }
   backend "s3" {
     bucket = "devint-* # change '*' to your student alias and add trailing quote
     key    = "state/remote-state"
-	region = "us-east-2"
+	  region = "us-east-2"
   }
 }
 

@@ -4,10 +4,12 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "student_alias" {
+  type        = string
   description = "Your student alias"
 }
 
 variable "name" {
+  type        = string
   description = "The name for the microservice and all resources in this module"
 }
 
@@ -22,6 +24,7 @@ variable "max_size" {
 }
 
 variable "user_data_script" {
+  type        = string
   description = "The user data script to run on the microservice server"
 }
 
@@ -36,6 +39,7 @@ variable "is_internal_alb" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "key_name" {
+  type        = string
   description = "The name of the EC2 Key Pair that can be used to SSH to the EC2 Instances. Leave blank to not associate a Key Pair with the Instances."
   default     = ""
 }
@@ -53,11 +57,13 @@ variable "alb_http_port" {
 }
 
 variable "server_text" {
+  type        = string
   description = "The text the server should return for HTTP requests"
   default     = "Hello, World"
 }
 
 variable "backend_url" {
+  type        = string
   description = "The URL the frontend can use to reach the backend. Leave blank if this is not a frontend."
   default     = ""
 }

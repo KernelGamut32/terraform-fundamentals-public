@@ -10,7 +10,7 @@ terraform {
   backend "s3" {
     bucket = "devint-* # change '*' to your student alias and add trailing quote
     key    = "state/remote-state"
-        region = "us-east-2"
+    region = "us-east-2"
   }
 }
 ```
@@ -31,10 +31,10 @@ aws_instance.web: Refreshing state... [id=INSTANCE_ID]
 where `INSTANCE_ID` is the ID you noted above.
 
 Now run the same exact code elsewhere, e.g., on your own local machine. you don't have terraform installed locally,
-you can just `cd` into the `elsewhere` directory which has the exact same Terraform code in it (actually the files
-in that directory are links to the code in the directory above, rather than copies).
+you can just `cd` into the `elsewhere` directory which is intended to have the exact same Terraform code in it. Copy the contents of
+`main.tf` from the `04a` root folder into the contents of `main.tf` in the `elsewhere` subfolder; repeat for `variables.tf`.
 
-Run `terraform plan` and confirm that Terraform says nothing needs to be done. If the state had been stored locally,
+From the `elsewhere` subfolder, run `terraform plan` and confirm that Terraform says nothing needs to be done. If the state had been stored locally,
 this could not be the case, but since the state is stored in an S3 bucket, it's being shared across both copies of
 the Terraform project.
 
@@ -47,7 +47,7 @@ Terraform always starts with a workspace called `default`. Let's create a new wo
 that we'll use this command
 
 ```
-terraform workspace new sandox
+terraform workspace new sandbox
 ```
 
 You should see output like this:
@@ -83,4 +83,15 @@ terraform workspace select sandbox
 terraform destroy
 ```
 
+Cleanup the workspace. Switch back to the `default` workspace and delete the `sandbox` workspace:
 
+```
+terraform workspace select default
+terraform workspace delete sandbox
+```
+
+Verify presence of only the `default` workspace:
+
+```
+terraform workspace list
+```

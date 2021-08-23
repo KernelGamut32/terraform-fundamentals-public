@@ -1,8 +1,18 @@
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
 provider "aws" {
-  version = "~> 2.0"
 }
 
 variable "student_alias" {
+  type        = string
   description = "Your student alias"
 }
 
@@ -14,5 +24,5 @@ resource "aws_s3_bucket" "state_bucket" {
 }
 
 output "state_bucket_name" {
-  value = "${aws_s3_bucket.state_bucket.bucket}"
+  value = aws_s3_bucket.state_bucket.bucket
 }

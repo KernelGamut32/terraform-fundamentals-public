@@ -2,6 +2,7 @@
 
 # Declare a variable so we can use it.
 variable "student_alias" {
+  type        = string
   description = "Your student alias"
 }
 
@@ -12,6 +13,6 @@ variable "object_count" {
 }
 
 variable "include_optional_file" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }

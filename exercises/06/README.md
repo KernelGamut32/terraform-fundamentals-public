@@ -10,8 +10,17 @@ Terraform is *ALL* about modules.  Every terraform working directory is really j
 1. Create a main.tf file in the main directory for the 6th exercise.  Inside the `main.tf` file you created, add:
 
  ```hcl
+ terraform {
+   required_version = ">= 1.0"
+   required_providers {
+     aws = {
+       source  = "hashicorp/aws"
+       version = ">= 2.0.0"
+     }
+   }
+ }
+
  provider "aws" {
-     version = "~> 2.0"
  }
 
  module "s3_bucket_01" {
@@ -32,6 +41,7 @@ Terraform is *ALL* about modules.  Every terraform working directory is really j
 
  ```hcl
  variable "student_alias" {
+     type        = string
      description = "Your student alias"
  }
  ```

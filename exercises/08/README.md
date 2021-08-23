@@ -1,18 +1,13 @@
 # Exercise #8: Understanding and Manipulating Data/Variables
 
-This is one part of the course where we'll look at some new stuff. Prior to terraform version 0.12, the only variable types available were:
+In this exercise, we'll have a chance to experiment with variables and manipulating data in Terraform.
 
-* String
-* List
-* Map
-
-As we saw in our discussion, there are a number of others now, so let's look at them in action. As you do this exercise, you're encouraged to change the HCL to experiment a bit with the different data types
+As we saw in our discussion, there are a number of primitive and complex types available, so let's look at them in action. As you do this exercise, you're encouraged to change the HCL to experiment a bit with the different data types
 and using them in action.
 
 ### Primitive Types
 
-Terraform has restructured to include variable types in a category "primitive." These are quite similar to
-what you'd find in other language primitives.
+These are quite similar to what you'd find in other language primitives.
 
 1. Change into the `primitives` directory and `apply` to see primitives in action
 
@@ -37,11 +32,11 @@ what you'd find in other language primitives.
  my_string_interpolated = my_string_value_interpolated
  ```
 
-1. Take a look at the main.tf file and we'll examine  each variable and each related output
+Take a look at the main.tf file and we'll examine  each variable and each related output
 
  #### Strings
- * The string type is probably the simplest of the primitives and it's the default type if you don't explicitly set a type
- * The above shows you the syntax for string interpolation
+ * The string type is probably the simplest of the primitives
+ * The code below shows you the syntax for string interpolation
  * You could do this when defining resource
 properties, not just in constructing outputs as above
  * We've seen this when making our buckets or bucket object
@@ -59,8 +54,7 @@ properties, not just in constructing outputs as above
   ```
 
  #### Numbers
-  * The `number` type is new in 0.12
-  * The above shows how you can deal with this number variable directly by doing arithmetic
+  * The code below shows how you can deal with this number variable directly by doing arithmetic
 
  ```hcl
  variable "my_number" {
@@ -74,8 +68,7 @@ properties, not just in constructing outputs as above
  ```
 
  #### Bools
- * The `bool` type is also new in 0.12
- * It gives you the power to perform boolean operations and checks in your HCL like we see above in both the ternary and negation syntax to construct these output values
+ * Gives you the power to perform boolean operations and checks in your HCL like we see in the code below in both the ternary and negation syntax to construct these output values
 
  ```hcl
  variable "my_bool" {
@@ -93,9 +86,7 @@ properties, not just in constructing outputs as above
 
 ### Complex Types
 
-Complex types are made up of mostly new types and capabilities in v0.12.
-
-3. Let's take a look at them in action
+Let's take a look at them in action
 
  ```bash
  cd complex
@@ -158,8 +149,7 @@ Complex types are made up of mostly new types and capabilities in v0.12.
  * The way we're using these variables in outputs would apply to any other resource or use in your HCL
 
  #### Lists
-  * The `list` type is not new in 0.12, and works similarly as it did before
-  * In our example here, however, we're setting a [type
+  * In our example here, we're setting a [type
  constraint](https://www.terraform.io/docs/configuration/types.html), so that our list can only contain string values
   * In our two output examples, we see first an example of accessing a particular list item value, as well as using the entire list
 
@@ -210,7 +200,7 @@ Complex types are made up of mostly new types and capabilities in v0.12.
 
  #### Maps
 
-  * Maps are also not new in 0.12, and they work very similarly to how they did before, except that they now allow a type constraint for the related value(s)
+  * Maps also allow a type constraint for the related value(s)
   * A map is just a collection of key/value pairs
 
  ```hcl
@@ -220,7 +210,7 @@ Complex types are made up of mostly new types and capabilities in v0.12.
  }
  ...
  output "my_map_values" {
-     value = var.my_map # the ability to do this without quotes is new in 0.12!
+     value = var.my_map
  }
  ```
 
@@ -254,7 +244,7 @@ Two very common examples in the AWS provider:
 * Querying availability zones in your current AWS region
   * This is useful for things like ensuring that you have a resource in every AZ for your region
 
-4. Let's look at some of this in action
+1. Let's look at some of this in action
 
  ```bash
  cd other-data
@@ -285,7 +275,7 @@ Two very common examples in the AWS provider:
  * The AWS availability zones data source
 
 
-5. Look at the `main.tf` relevant resource that actually did the AMI querying for us:
+2. Look at the `main.tf` relevant resource that actually did the AMI querying for us:
 
  ```hcl
  # A Terraform data source is a specific type of resource that gives us the ability to pull in data from elsewhere to
@@ -309,12 +299,11 @@ Two very common examples in the AWS provider:
 
  * Don't worry too much about all the pieces here, the most important part to understand right now is really `data "aws_ami"`
  * This is a data source type resource that is a generic construct in Terraform itself
- * The AWS provider implements this `aws_ami` data
-source type so that we can query AMIs available in AWS
+ * The AWS provider implements this `aws_ami` data source type so that we can query AMIs available in AWS
  * After the data source resource is declared, we can then access it's attributes that have been populated by actually making the query to AWS `${data.aws_ami.ubuntu.id}`
 
 
-6. Now look at the availability zone query pieces
+3. Now look at the availability zone query pieces
 
  ```hcl
  # Another AWS provider data source, giving us the ability to get all of the AZs in our current region

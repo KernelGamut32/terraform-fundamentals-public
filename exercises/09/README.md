@@ -142,8 +142,7 @@ resource "aws_s3_bucket_object" "optional_file" {
 ```
 
 The `count = "${var.include_optional_file ? 1 : 0}"` syntax says: if the `include_optional_file` variable is set to true, we
-want one instance of this object, otherwise we want 0. Could you think of another way to produce the same result? Hint: it's how
-you had to do it before the `bool` data type appeared.
+want one instance of this object, otherwise we want 0.
 
 We see in our plan output:
 

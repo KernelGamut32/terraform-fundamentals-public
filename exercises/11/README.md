@@ -8,12 +8,12 @@ Our goal here is to run an auto-scaled, load-balanced application in AWS and set
 
 Our `microservice` module is designed to be a generic module for spinning up some sort of application that can scale and be load balanced in AWS. Some key components to this module:
 
-* **AWS Launch Configuration**: a launch configuration defines a standard way in which an EC2 instance should be launched, such as the base AMI, the instance type, the user data (launch script), security groups or firewall rules, etc.
-* **AWS Autoscaling Group**: an autoscaling group will use rules and other properties to make decisions on how many of the above launch configurations, or actual servers will be running for our service
-* **AWS Application Load Balancer**: a load balancer will listen for the actual user or service requests coming in and decide where these requests should go
-	* **Target Group**: a target group is basically the backend of the load balancer, it helps in health checking the autoscaling group to ensure that the load balancer routes appropriately
-	* **Listeners**: this is the part that actually listens for requests from the outside, and then directs accordingly to the target group/backend and into the autoscaling group instances
-* **user-data directory**: stores the startup scripts for the servers, one for each of a backend server and the frontend server
+- **AWS Launch Configuration**: a launch configuration defines a standard way in which an EC2 instance should be launched, such as the base AMI, the instance type, the user data (launch script), security groups or firewall rules, etc.
+- **AWS Autoscaling Group**: an autoscaling group will use rules and other properties to make decisions on how many of the above launch configurations, or actual servers will be running for our service
+- **AWS Application Load Balancer**: a load balancer will listen for the actual user or service requests coming in and decide where these requests should go
+  - **Target Group**: a target group is basically the backend of the load balancer, it helps in health checking the autoscaling group to ensure that the load balancer routes appropriately
+  - **Listeners**: this is the part that actually listens for requests from the outside, and then directs accordingly to the target group/backend and into the autoscaling group instances
+- **user-data directory**: stores the startup scripts for the servers, one for each of a backend server and the frontend server
 
 ## The project calling the `microservice` module
 
@@ -22,9 +22,23 @@ Our `microservice` module is designed to be a generic module for spinning up som
 # DEPLOY TWO MICROSERVICES: FRONTEND AND BACKEND
 # ---------------------------------------------------------------------------------------------------------------------
 
+# Define key properties of the session.
+# Allows you to define specific target version(s) of Terraform (min/max).
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
+# Declare the provider being used, in this case it's AWS.
+# Provider supports setting things like target region.
+# It can also pull credentials and the region to use from environment variables, which we have set, so we'll use those
 provider "aws" {
-  version = "~> 2.0"
-  region  = "${var.aws_region}"
+  region = var.aws_region
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -65,107 +79,110 @@ module "backend" {
 ```
 
 We've abstracted almost everything into our module, and we see here a nice reusability pattern. It also makes it easy
-to see our intention for the project as whole in the code itself (documented infrastructure code through the code itself?):
+to see our intention for the project as a whole in the code itself (documented infrastructure code through the code itself?):
 
-* We'll set up a backend service that should have at least 1 and at most 3 servers; we're using a startup script called `user-data-backend.sh` and we're passing the text that will be served through the service as the output of the app/page
-* We'll set up a frontend service that should have at least 1 and at most 2 servers; it will use the `user-data-frontend.sh` as the startup script and we'll pass the text to serve through the app/page as well
+- We'll set up a backend service that should have at least 1 and at most 3 servers; we're using a startup script called `user-data-backend.sh` and we're passing the text that will be served through the service as the output of the app/page
+- We'll set up a frontend service that should have at least 1 and at most 2 servers; it will use the `user-data-frontend.sh` as the startup script and we'll pass the text to serve through the app/page as well
 
 ### Deploying our project
 
 1. Let's start with `init` so that we can cover a quick side topic.
 
- ```
- The following providers do not have any version constraints in configuration, so the latest version was installed.
+Our microservice module is using:
 
- To prevent automatic upgrades to new major versions that may contain breaking changes, it is recommended to add version = "..." constraints to the corresponding provider blocks in configuration, with the constraint strings
- suggested below.
+```hcl
+data "template_file" "user_data" {
+    template = "${var.user_data_script}"
 
- * provider.template: version = "~> 2.1"
- ```
-
- We see this because our microservice module is using:
-
- ```hcl
- data "template_file" "user_data" {
-     template = "${var.user_data_script}"
-
-     vars = {
-       server_text      = "${var.server_text}"
-       server_http_port = "${var.server_http_port}"
-       backend_url      = "${var.backend_url}"
-     }
+    vars = {
+      server_text      = "${var.server_text}"
+      server_http_port = "${var.server_http_port}"
+      backend_url      = "${var.backend_url}"
+    }
 }
 ```
 
- This data source is making use of the `template` provider, but our module doesn't define a specific provider block for it, nor does our Terraform using the module, thus we are presented with this message.
+This data source is making use of the `template` provider, but our module doesn't define a specific provider block for it, nor does our Terraform using the module. By default, it will download and use the latest version.
 
- It's considered best practice to define provider blocks with some sort of explicit version requirement. Things have been changing fast in Terraform and all of its available providers, so locking down to a particular version or at least major version can be helpful if not necessary in many cases.
+If desired, we can define provider blocks with some sort of explicit version requirement. This gives us options to lock down to a particular version or at least major version.
 
- So, should the block be defined in the module or in the code that uses the module? The answer depends, but Hashicorp recommends that only the _root_ module, or the  Terraform code that's calling it define provider blocks.
+So, should the block be defined in the module or in the code that uses the module? The answer depends, but Hashicorp recommends that only the _root_ module, or the Terraform code that's calling it define provider blocks.
 In this way, those using a module can decide on what
 version of the provider they need to use. Modules will inherit provider definitions implicitly by default. See
 
- https://www.terraform.io/docs/configuration/modules.html#providers-within-modules
+https://www.terraform.io/docs/configuration/modules.html#providers-within-modules
 
- for more info.
+for more info.
 
-1. Let's add the provider block for the `template` provider and re-run `init`. Add the following to our root main.tf file at the top:
+2. Let's add the provider block for the `template` provider and re-run `init`. Add the following to our root main.tf file at the top:
 
- ```hcl
- provider "template" {
-     version = "~> 2.1"
- }
- ```
+```hcl
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
 
-1. Then we can re-run init:
+    template = {
+      source  = "hashicorp/template"
+      version = ">= 2.0.0"
+    }
+  }
+}
+```
+
+3. Then we can re-run init:
+
 ```bash
 rm -rf .terraform
 terraform init
 ```
 
- We should no longer see the warning during `init`. Let's eamine one other related thing. Say a module does define
+Let's eamine one other related thing. Say a module does define
 a provider with some settings that we don't want. We do have another option to explictly pass a provider to a module by doing
 something like:
 
- ```hcl
+```hcl
 provider "aws" {
-    region = "us-west-1"
+   region = "us-west-1"
 }
 
- # A non-default, or "aliased" configuration is also defined for a different
- # region.
- provider "aws" {
-     alias  = "usw2"
-     region = "us-west-2"
- }
+# A non-default, or "aliased" configuration is also defined for a different
+# region.
+provider "aws" {
+    alias  = "usw2"
+    region = "us-west-2"
+}
 
- # An example child module is instantiated with the _aliased_ configuration,
- # so any AWS resources it defines will use the us-west-2 region.
- module "example" {
-     source    = "./example"
-     providers = {
-       aws = "aws.usw2"
-     }
+# An example child module is instantiated with the _aliased_ configuration,
+# so any AWS resources it defines will use the us-west-2 region.
+module "example" {
+    source    = "./example"
+    providers = {
+      aws = "aws.usw2"
+    }
 }
 ```
 
- This particular example is defining the default provider for this module or terraform project with a region of us-west-1, but an
+This particular example is defining the default provider for this module or terraform project with a region of us-west-1, but an
 alternate provider that can then be passed to the example module.
 
-1. OK, back to our main exercise though, as soon as you're done with your `init` command, we can move the actual `apply`.
+4. OK, back to our main exercise though; as soon as you're done with your `init` command, we can execute the actual `apply`.
 
- **Remember the Exercise 11 AWS Region you were provided along with your username and password? The apply will ask you for a region. Enter that region here.**
+**Remember the Exercise 11 AWS Region you were provided along with your username and password? The apply will ask you for a region. Enter that region here.**
 
- The apply will present you with the plan and ask you to accept it to continue with the actual apply. Type "yes" and we'll
+The apply will present you with the plan and ask you to accept it to continue with the actual apply. Type "yes" and we'll
 see the actual creation of resources on AWS start to happen. This will take a little while, so let's look through some other
-things in the meantime
+things in the meantime.
 
 ### Some new and common things going on in the `microservice` module
 
 #### Dependencies
 
 ```
-depends_on = ["aws_alb_listener.http"]
+depends_on = [aws_alb_listener.http]
 ```
 
 The `depends_on` meta-attribute is a common Terraform resource property that allows you to define explicit dependencies. In most
@@ -192,14 +209,11 @@ define the same lifecycle rule for terraform internal processing to happen as ex
 We haven't seen these yet, but there's yet another type of data source: a `data "template_file"` resource allows us to load a local template file and pass values into for rendering and then for use in another resource. In this case, we pass in our rendered templates
 as the startup scripts for our servers
 
-#### Terraform 0.12 only syntax?
-
-Can you identify the syntax in our project and the `microservice` module that would only work in Terraform v0.12?
-
 ### OK, back to our apply results
+
 5. Your apply should have finished by now, so let's look at some the output:
 
- ```
+```
 module.backend.aws_security_group.web_server: Creating...
 module.frontend.aws_security_group.web_server: Creating...
 module.frontend.aws_security_group.alb: Creating...
@@ -294,55 +308,56 @@ module.frontend.aws_autoscaling_group.microservice: Still creating... [1m0s elap
 module.backend.aws_autoscaling_group.microservice: Creation complete after 1m7s [id=terraform-20190623035509224100000001]
 module.frontend.aws_autoscaling_group.microservice: Creation complete after 1m6s [id=terraform-20190623035747150700000002]
 
- Apply complete! Resources: 26 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 26 added, 0 changed, 0 destroyed.
 
- Outputs:
+Outputs:
 
- backend_url = http://internal-backend-412928292.us-west-1.elb.amazonaws.com:80/
- frontend_url = http://frontend-1508950933.us-west-1.elb.amazonaws.com:80/
+backend_url = http://internal-backend-412928292.us-west-1.elb.amazonaws.com:80/
+frontend_url = http://frontend-1508950933.us-west-1.elb.amazonaws.com:80/
 ```
 
- We don't need to look closely at most of our output, but let's notice a few things:
+We don't need to look closely at most of our output, but let's notice a few things:
 
- * We're able to track how long particular resources take to get created
- * Terraform's HCL declarative nature means it can abstract some of the complexity of getting the job done away from the user
-    * Some of the work going on behind the scenes in the above apply is happening in parallel depending on what Terraform has figured out from things like interpreted dependencies and the `depends_on` and `lifecycle` points we discussed above
-<br/><br/>
-1. The last thing to note are the outputs. Our computed backend and frontend URLs are output for us. So, it's just a matter of seeing if everything is up-and-running using these values. Let's check the frontend URL first. Open your browser and navigate to the frontend URL. You should see something like:
+- We're able to track how long particular resources take to get created
+- Terraform's HCL declarative nature means it can abstract some of the complexity of getting the job done away from the user \* Some of the work going on behind the scenes in the above apply is happening in parallel depending on what Terraform has figured out from things like interpreted dependencies and the `depends_on` and `lifecycle` points we discussed above
+  <br/><br/>
 
- ```
- Hello from frontend
- Response from backend:
+6. The last thing to note are the outputs. Our computed backend and frontend URLs are output for us. So, it's just a matter of seeing if everything is up-and-running using these values. Let's check the frontend URL first. Open your browser and navigate to the frontend URL. You should see something like:
 
- {"text": "Hello from backend"}
- ```
+```
+Hello from frontend
+Response from backend:
 
- _If your frontend endpoint isn't up yet, just give it a little time. Autoscaling groups in combination with launch configurations can take
+{"text": "Hello from backend"}
+```
+
+_If your frontend endpoint isn't up yet, just give it a little time. Autoscaling groups in combination with launch configurations can take
 some time to actually spin up the EC2 instances. In addition, we also have a boot script running that is run to bring up the server(s) once
 the EC2 instances themselves are up. So, yeah, it could take just a bit._
 
- So, we can see that our frontend is working. We're hitting the application load balancer URL, so everything is routing correctly through
-the load balancer to our EC2 instances actually running the service code. Including, we can see that the frontend is correctly communicating
+So, we can see that our frontend is working. We're hitting the application load balancer URL, so everything is routing correctly through
+the load balancer to our EC2 instances actually running the service code. Additionally, we can see that the frontend is correctly communicating
 through the backend load balancer to the backend server or servers. So, we also have our backend load balancer URL. Let's try to open that
 in the browser.
 
- Did it work? Wait, can you figure out why not?
+Did it work? Wait, can you figure out why not?
 
 ### What else?
 
- 7. If you have more time, feel free to play around with the project and/or module code to change things in the infrastructure you just brought up.
+7.  If you have more time, feel free to play around with the project and/or module code to change things in the infrastructure you just brought up.
 
-  * Can you trigger certain things that require fully recreating resources vs just changing them in place?
-  * Can you break your app? I'm sure you can, but can you break it in a way where you can fix it again?
-<br/><br/>
- 1. Poke around in the AWS console. It can be particularly interesting to look at EC2-related stuff there when it comes to autoscaling groups, load balancers and such. It's useful to see that other students have their resources intermingled with yours. Be respectful of them.
-Your Terraform state is completely separate from your fellow students, and even though very common resources can live beside each other like this,
-we can manage them with a completely different state.
+- Can you trigger certain things that require fully recreating resources vs just changing them in place?
+- Can you break your app? I'm sure you can, but can you break it in a way where you can fix it again?
+  <br/><br/>
+
+8.  Poke around in the AWS console. It can be particularly interesting to look at EC2-related stuff there when it comes to autoscaling groups, load balancers and such. It's useful to see that other students have their resources intermingled with yours. Be respectful of them.
+    Your Terraform state is completely separate from your fellow students, and even though very common resources can live beside each other like this,
+    we can manage them with a completely different state.
 
 ### Finishing off this exercise
 
 9. Let's destroy everything before we move on. **PLEASE make sure you do it for this exercise especially!**
 
- ```bash
- terraform destroy
- ```
+```bash
+terraform destroy
+```

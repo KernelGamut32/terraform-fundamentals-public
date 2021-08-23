@@ -8,17 +8,17 @@
 ```hcl
 # Declare a variable so we can use it.
 variable "student_alias" {
+  type        = string
   description = "Your student alias"
+  validation {
+    condition     = trimprefix(var.student_alias, "test") == var.student_alias
+    error_message = "Please do not use test aliases with this deployment."
+  }
 }
 ```
 
 * (BTW, what's the name of our variable?)
 
-### What are the possible properties of a variable?
-
-1. `default`: allows for setting a default value, otherwise terraform requires it to be set in one of four ways
-2. `description`: a useful descriptor for the variable
-3. `type`: we'll discuss types in depth later but default is `string`
 
 ### What is the value of this variable?
 
@@ -37,8 +37,22 @@ terraform init
 The init should have picked up on the fact that we had a reference to AWS resources in our HCL. Namely, that we defined the AWS provider
 
 ```hcl
+# Define key properties of the session.
+# Allows you to define specific target version(s) of Terraform (min/max).
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
+# Declare the provider being used, in this case it's AWS.
+# Provider supports setting things like target region.
+# It can also pull credentials and the region to use from environment variables, which we have set, so we'll use those
 provider "aws" {
-  version = "~> 2.0" # meaning any non-beta version >= 2.0 and < 3.0
 }
 ```
 
@@ -105,3 +119,9 @@ Try just running the plan without having a pre-populated value set:
 ```
 terraform plan
 ```
+
+### 5) Adjust validation
+
+1. Adjust the validation defined for the `student_alias` variable to also enforce a minimum length of 5 characters and a maximum length of 20 characters. You might find https://www.terraform.io/docs/language/functions/index.html helpful for info on built-in functions. Update the error message to reflect all validation rules.
+
+1. Test `terraform plan` with values for the variable that satisfy the validation and that fail the validation.

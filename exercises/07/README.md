@@ -5,7 +5,7 @@
 
 ### Process Errors
 
-Process errors are really about just something problematic in way that `terraform` is run.
+Process errors are really about just something problematic in the way that `terraform` is run.
 
 1. What happens when you run `apply` before `init`? Try it.
 
@@ -56,7 +56,7 @@ not to prompt you for input variables: `-input=[true|false]`. Let's try running 
 3. Modify `main.tf` to include something invalid. At the end of the file, add this:
 
  ```hcl
- resource "aws_s3_bucket_object" "an_invalid_resource_definition" {
+ resource "aws_s3_bucket_object" "an_invalid_resource_definition" { }
  ```
 
 1. Clearly a syntax problem, so run a `plan` and you should see something like:
@@ -116,7 +116,7 @@ and get a similar result. Two benefits of `validate`:
   The argument "bucket" is required, but no definition was found.
 ```
 
- So, our provider is actually giving us this. The AWS provider defines what a `aws_s3_bucket_object` should include, and what is required. The `bucket` property is required, so it's tell us we have a problem with this resource definition.
+ So, our provider is actually giving us this. The AWS provider defines what a `aws_s3_bucket_object` should include, and what is required. The `bucket` property is required, so it's telling us we have a problem with this resource definition.
 
 ### Provider Errors or Passthrough
 
@@ -209,7 +209,7 @@ and get a similar result. Two benefits of `validate`:
 
  Our first bucket object that was valid was created, only the second one failed.
 
- Terraform will complete what it can and fail on what it can't. Sometimes the solution to failures can sometimes just be running the same Terraform multiple times (e.g., if there's a network issue between where you're running Terraform and AWS).
+ Terraform will complete what it can and fail on what it can't. Sometimes the solution to failures can just be running the same Terraform multiple times (e.g., if there's a network issue between where you're running Terraform and AWS).
 
 ### Finishing up
 

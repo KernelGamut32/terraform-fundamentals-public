@@ -10,12 +10,23 @@ ls -lah
 
 Generally the name of the major configuration file in a Terraform working directory (but name is arbitrary).
 
-```HCL
+```hcl
+# Define key properties of the session.
+# Allows you to define specific target version(s) of Terraform (min/max).
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
 # Declare the provider being used, in this case it's AWS.
-# This provider supports setting the provider version, AWS credentials as well as the region.
+# Provider supports setting things like target region.
 # It can also pull credentials and the region to use from environment variables, which we have set, so we'll use those
 provider "aws" {
-  version = "~> 2.0"
 }
 
 # declare a resource stanza so we can create something, in this case a key pair
@@ -51,5 +62,8 @@ Let's run some terraform commands!
 
 `terraform validate`
 * Runs a deeper scan of config to show potential issues with more complex problems such as circular dependencies and missing values
+
+`terraform plan`
+* Provides you with a "what if" view of the changes - can use to verify before applying
 
 If "terraform init" successful, you're ready to move on. For now, don't run apply. We'll get to this in a future exercise.

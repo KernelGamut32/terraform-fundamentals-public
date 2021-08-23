@@ -2,6 +2,7 @@
 
 # Declare a variable so we can use it.
 variable "student_alias" {
+  type        = string
   description = "Your student alias"
 }
 
@@ -16,5 +17,5 @@ data "terraform_remote_state" "other_project" {
 }
 
 output "other_project_bucket" {
-  value = "${data.terraform_remote_state.other_project.outputs.bucket_name}"
+  value = data.terraform_remote_state.other_project.outputs.bucket_name
 }

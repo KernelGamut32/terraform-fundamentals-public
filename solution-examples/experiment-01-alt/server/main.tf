@@ -1,8 +1,3 @@
-provider "aws" {
-  version = "~> 2.0"
-  region  = var.region
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 

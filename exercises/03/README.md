@@ -183,7 +183,7 @@ are removed and in the order that their dependencies require.
  terraform destroy
  ```
 
- You should see the following:
+ You should see something like the following:
 
  ```
  aws_s3_bucket_object.user_student_alias_object: Refreshing state... [id=student.alias]

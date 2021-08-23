@@ -1,3 +1,3 @@
 students=[
-  { name: "jschmoe", region: "us-east2" },
+  { name: "jschmoe", region: "us-east-1" },
 ]
