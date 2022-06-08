@@ -71,13 +71,9 @@ env | grep AWS
 
 The printenv above should output something like:
 ```
+AWS_ACCESS_KEY_ID=xxxxxx
 AWS_SECRET_ACCESS_KEY=xxxxxxx
 AWS_DEFAULT_REGION=us-east-2
-AWS_CLOUDWATCH_HOME=/opt/aws/apitools/mon
-AWS_ACCESS_KEY_ID=xxxxxx
-AWS_PATH=/opt/aws
-AWS_AUTO_SCALING_HOME=/opt/aws/apitools/as
-AWS_ELB_HOME=/opt/aws/apitools/elb
 ```
 
 Having done that, we should be ready to move on!
