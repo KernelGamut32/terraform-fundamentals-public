@@ -56,7 +56,7 @@ not to prompt you for input variables: `-input=[true|false]`. Let's try running 
 3. Modify `main.tf` to include something invalid. At the end of the file, add this:
 
  ```hcl
- resource "aws_s3_bucket_object" "an_invalid_resource_definition" { }
+ resource "aws_s3_object" "an_invalid_resource_definition" { }
  ```
 
 1. Clearly a syntax problem, so run a `plan` and you should see something like:
@@ -64,7 +64,7 @@ not to prompt you for input variables: `-input=[true|false]`. Let's try running 
  ```
  Error: Argument or block definition required
 
-     on main.tf line 17, in resource "aws_s3_bucket_object" "an_invalid_resource_definition":
+     on main.tf line 17, in resource "aws_s3_object" "an_invalid_resource_definition":
      17:
 
      An argument or block definition is required here.
@@ -75,12 +75,12 @@ not to prompt you for input variables: `-input=[true|false]`. Let's try running 
 
 ### Validation Errors
 
-This one might not be as clear as the syntax problem above. Let's pass something invalid to the AWS provider by setting a property that doesn't jive with the `aws_s3_bucket_object` resource as defined in the AWS provider.
+This one might not be as clear as the syntax problem above. Let's pass something invalid to the AWS provider by setting a property that doesn't jive with the `aws_s3_object` resource as defined in the AWS provider.
 
 5. We'll modify the syntax issue above slightly, so change your resource definition to be:
 
  ```hcl
-  resource "aws_s3_bucket_object" "an_invalid_resource_definition" {
+  resource "aws_s3_object" "an_invalid_resource_definition" {
      key     = "student.alias"
      content = "This bucket is reserved for ${var.student_alias}"
   }
@@ -110,13 +110,13 @@ and get a similar result. Two benefits of `validate`:
  ```
  Error: Missing required argument
 
-    on main.tf line 17, in resource "aws_s3_bucket_object" "an_invalid_resource_definition":
-    17: resource "aws_s3_bucket_object" "an_invalid_resource_definition" {
+    on main.tf line 17, in resource "aws_s3_object" "an_invalid_resource_definition":
+    17: resource "aws_s3_object" "an_invalid_resource_definition" {
 
   The argument "bucket" is required, but no definition was found.
 ```
 
- So, our provider is actually giving us this. The AWS provider defines what a `aws_s3_bucket_object` should include, and what is required. The `bucket` property is required, so it's telling us we have a problem with this resource definition.
+ So, our provider is actually giving us this. The AWS provider defines what a `aws_s3_object` should include, and what is required. The `bucket` property is required, so it's telling us we have a problem with this resource definition.
 
 ### Provider Errors or Passthrough
 
@@ -125,7 +125,7 @@ and get a similar result. Two benefits of `validate`:
 6. Modify the invalid resource we've been working with here in `main.tf` to now be:
 
  ```hcl
- resource "aws_s3_bucket_object" "a_resource_that_will_fail" {
+ resource "aws_s3_object" "a_resource_that_will_fail" {
      bucket  = "a-bucket-that-doesnt-exist-or-i-dont-own"
      key     = "file"
      content = "This will never exist"
@@ -140,8 +140,8 @@ and get a similar result. Two benefits of `validate`:
 
  Terraform will perform the following actions:
 
-   # aws_s3_bucket_object.a_resource_that_will_fail will be created
-   + resource "aws_s3_bucket_object" "a_resource_that_will_fail" {
+   # aws_s3_object.a_resource_that_will_fail will be created
+   + resource "aws_s3_object" "a_resource_that_will_fail" {
        + acl                    = "private"
        + bucket                 = "a-bucket-that-doesnt-exist-or-i-dont-own"
        + content                = "This will never exist"
@@ -154,8 +154,8 @@ and get a similar result. Two benefits of `validate`:
        + version_id             = (known after apply)
      }
 
-   # aws_s3_bucket_object.user_student_alias_object will be created
-   + resource "aws_s3_bucket_object" "user_student_alias_object" {
+   # aws_s3_object.user_student_alias_object will be created
+   + resource "aws_s3_object" "user_student_alias_object" {
        + acl                    = "private"
        + bucket                 = "devint-..."
        + content                = "This bucket is reserved for ..."
@@ -176,15 +176,15 @@ and get a similar result. Two benefits of `validate`:
 
     Enter a value: yes
 
-  aws_s3_bucket_object.a_resource_that_will_fail: Creating...
-  aws_s3_bucket_object.user_student_alias_object: Creating...
-  aws_s3_bucket_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
+  aws_s3_object.a_resource_that_will_fail: Creating...
+  aws_s3_object.user_student_alias_object: Creating...
+  aws_s3_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
 
   Error: Error putting object in S3 bucket (a-bucket-that-doesnt-exist-or-i-dont-own): NoSuchBucket: The specified bucket does not exist
         status code: 404, request id: 13C49158C71AE950, host id: /b1aIUG6gMMiJCI2PBVKDoBcBmutIR/vMEqEeTTojSxj400e31jcsETZCOGxRGQ031ilI1QrcWY=
 
-  on main.tf line 17, in resource "aws_s3_bucket_object" "a_resource_that_will_fail":
-  17: resource "aws_s3_bucket_object" "a_resource_that_will_fail" {
+  on main.tf line 17, in resource "aws_s3_object" "a_resource_that_will_fail":
+  17: resource "aws_s3_object" "a_resource_that_will_fail" {
 ```
 
  Where is this error actually coming from?
@@ -194,15 +194,15 @@ and get a similar result. Two benefits of `validate`:
  One other thing worth noting–Did everything fail?
 
  ```
- aws_s3_bucket_object.a_resource_that_will_fail: Creating...
- aws_s3_bucket_object.user_student_alias_object: Creating...
- aws_s3_bucket_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
+ aws_s3_object.a_resource_that_will_fail: Creating...
+ aws_s3_object.user_student_alias_object: Creating...
+ aws_s3_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
 
  Error: Error putting object in S3 bucket (a-bucket-that-doesnt-exist-or-i-dont-own): NoSuchBucket: The specified bucket does not exist
         status code: 404, request id: 13C49158C71AE950, host id: /b1aIUG6gMMiJCI2PBVKDoBcBmutIR/vMEqEeTTojSxj400e31jcsETZCOGxRGQ031ilI1QrcWY=
 
-    on main.tf line 17, in resource "aws_s3_bucket_object" "a_resource_that_will_fail":
-    17: resource "aws_s3_bucket_object" "a_resource_that_will_fail" {
+    on main.tf line 17, in resource "aws_s3_object" "a_resource_that_will_fail":
+    17: resource "aws_s3_object" "a_resource_that_will_fail" {
 ```
 
  Nope!
@@ -216,7 +216,7 @@ and get a similar result. Two benefits of `validate`:
 7. Remove the offending HCL now in `main.tf`
 
  ```
- resource "aws_s3_bucket_object" "a_resource_that_will_fail" {
+ resource "aws_s3_object" "a_resource_that_will_fail" {
      bucket  = "a-bucket-that-doesnt-exist-or-i-dont-own"
      key     = "file"
      content = "This will never exist"

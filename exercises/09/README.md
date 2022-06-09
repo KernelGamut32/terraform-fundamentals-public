@@ -30,8 +30,8 @@ objects, and related logical support for the sake of dynamic resource management
 
  Terraform will perform the following actions:
 
-  # aws_s3_bucket_object.dynamic_file[0] will be created
-   + resource "aws_s3_bucket_object" "dynamic_file" {
+  # aws_s3_object.dynamic_file[0] will be created
+   + resource "aws_s3_object" "dynamic_file" {
        + acl                    = "private"
        + bucket                 = "devint-..."
        + content                = "dynamic-file at index 0"
@@ -44,8 +44,8 @@ objects, and related logical support for the sake of dynamic resource management
        + version_id             = (known after apply)
      }
 
-  # aws_s3_bucket_object.dynamic_file[1] will be created
-  + resource "aws_s3_bucket_object" "dynamic_file" {
+  # aws_s3_object.dynamic_file[1] will be created
+  + resource "aws_s3_object" "dynamic_file" {
        + acl                    = "private"
        + bucket                 = "devint-..."
        + content                = "dynamic-file at index 1"
@@ -58,8 +58,8 @@ objects, and related logical support for the sake of dynamic resource management
        + version_id             = (known after apply)
      }
 
-  # aws_s3_bucket_object.dynamic_file[2] will be created
-  + resource "aws_s3_bucket_object" "dynamic_file" {
+  # aws_s3_object.dynamic_file[2] will be created
+  + resource "aws_s3_object" "dynamic_file" {
        + acl                    = "private"
        + bucket                 = "devint-..."
        + content                = "dynamic-file at index 2"
@@ -72,8 +72,8 @@ objects, and related logical support for the sake of dynamic resource management
        + version_id             = (known after apply)
      }
 
-  # aws_s3_bucket_object.optional_file[0] will be created
-  + resource "aws_s3_bucket_object" "optional_file" {
+  # aws_s3_object.optional_file[0] will be created
+  + resource "aws_s3_object" "optional_file" {
        + acl                    = "private"
        + bucket                 = "devint-..."
        + content                = "optional-file"
@@ -96,10 +96,10 @@ objects, and related logical support for the sake of dynamic resource management
 
 ### The `count` parameter
 
-Let's look at the `main.tf` file here to see what's going on. First, the `aws_s3_bucket_object.dynamic_file` definition
+Let's look at the `main.tf` file here to see what's going on. First, the `aws_s3_object.dynamic_file` definition
 
 ```hcl
-resource "aws_s3_bucket_object" "dynamic_file" {
+resource "aws_s3_object" "dynamic_file" {
   count   = "${var.object_count}"
   bucket  = "devint-${var.student_alias}"
   key     = "dynamic-file-${count.index}"
@@ -118,13 +118,13 @@ variable "object_count" {
 }
 ```
 
-And it has a default value of **3**, so our `aws_s3_bucket_object` resource uses the `count` property to dynamically define the number
+And it has a default value of **3**, so our `aws_s3_object` resource uses the `count` property to dynamically define the number
 of "copies" of this resource we'd like. This all adds up to our plan telling us that the following would be created:
 
 ```
-aws_s3_bucket_object.dynamic_file[0] will be created
-aws_s3_bucket_object.dynamic_file[1] will be created
-aws_s3_bucket_object.dynamic_file[2] will be created
+aws_s3_object.dynamic_file[0] will be created
+aws_s3_object.dynamic_file[1] will be created
+aws_s3_object.dynamic_file[2] will be created
 ```
 
 ### Conditional HCL Resources
@@ -133,7 +133,7 @@ The count parameter, now in combination with the `bool` type is particularly use
 things in your infrastructure. Let's look at our `main.tf` again to see an example:
 
 ```hcl
-resource "aws_s3_bucket_object" "optional_file" {
+resource "aws_s3_object" "optional_file" {
   count   = "${var.include_optional_file ? 1 : 0}"
   bucket  = "devint-${var.student_alias}"
   key     = "optional-file"
@@ -147,8 +147,8 @@ want one instance of this object, otherwise we want 0.
 We see in our plan output:
 
 ```
-  # aws_s3_bucket_object.optional_file[0] will be created
-  + resource "aws_s3_bucket_object" "optional_file" {
+  # aws_s3_object.optional_file[0] will be created
+  + resource "aws_s3_object" "optional_file" {
       + acl                    = "private"
       + bucket                 = "devint-..."
       + content                = "optional-file"

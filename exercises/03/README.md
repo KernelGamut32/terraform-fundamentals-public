@@ -31,8 +31,8 @@ Resource actions are indicated with the following symbols:
 
  Terraform will perform the following actions:
 
-  # aws_s3_bucket_object.user_student_alias_object will be created
-  + resource "aws_s3_bucket_object" "user_student_alias_object" {
+  # aws_s3_object.user_student_alias_object will be created
+  + resource "aws_s3_object" "user_student_alias_object" {
       + acl                    = "private"
       + bucket                 = "devint-..."
       + content                = "This bucket is reserved for ..."
@@ -75,8 +75,8 @@ Resource actions are indicated with the following symbols:
 
  Terraform will perform the following actions:
 
-  # aws_s3_bucket_object.user_student_alias_object will be created
-  + resource "aws_s3_bucket_object" "user_student_alias_object" {
+  # aws_s3_object.user_student_alias_object will be created
+  + resource "aws_s3_object" "user_student_alias_object" {
       + acl                    = "private"
       + bucket                 = "devint-..."
       + content                = "This bucket is reserved for ..."
@@ -97,8 +97,8 @@ Resource actions are indicated with the following symbols:
 
      Enter a value: yes
 
- aws_s3_bucket_object.user_student_alias_object: Creating...
- aws_s3_bucket_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
+ aws_s3_object.user_student_alias_object: Creating...
+ aws_s3_object.user_student_alias_object: Creation complete after 1s [id=student.alias]
 
  Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
  ```
@@ -123,7 +123,7 @@ Now, let's try making a change to the s3 bucket object and allow Terraform to co
 
  ```hcl
 # declare a resource stanza so we can create something.
-resource "aws_s3_bucket_object" "user_student_alias_object" {
+resource "aws_s3_object" "user_student_alias_object" {
   bucket  = "devint-${var.student_alias}"
   key     = "student.alias"
   content = "This bucket is reserved for ${var.student_alias} ****ONLY****"
@@ -141,8 +141,8 @@ resource "aws_s3_bucket_object" "user_student_alias_object" {
  ```
  Terraform will perform the following actions:
 
-    # aws_s3_bucket_object.user_student_alias_object will be updated in-place
-    ~ resource "aws_s3_bucket_object" "user_student_alias_object" {
+    # aws_s3_object.user_student_alias_object will be updated in-place
+    ~ resource "aws_s3_object" "user_student_alias_object" {
         acl           = "private"
         bucket        = "devint-..."
       ~ content       = "This bucket is reserved for ..." -> "This bucket is reserved for ... ****ONLY****"
@@ -186,7 +186,7 @@ are removed and in the order that their dependencies require.
  You should see something like the following:
 
  ```
- aws_s3_bucket_object.user_student_alias_object: Refreshing state... [id=student.alias]
+ aws_s3_object.user_student_alias_object: Refreshing state... [id=student.alias]
 
  An execution plan has been generated and is shown below.
  Resource actions are indicated with the following symbols:
@@ -194,8 +194,8 @@ are removed and in the order that their dependencies require.
 
  Terraform will perform the following actions:
 
-  # aws_s3_bucket_object.user_student_alias_object will be destroyed
-  - resource "aws_s3_bucket_object" "user_student_alias_object" {
+  # aws_s3_object.user_student_alias_object will be destroyed
+  - resource "aws_s3_object" "user_student_alias_object" {
       - acl           = "private" -> null
       - bucket        = "devint-chucky" -> null
       - content       = "This bucket is reserved for ... ****ONLY****" -> null
@@ -215,8 +215,8 @@ are removed and in the order that their dependencies require.
 
      Enter a value: yes
 
- aws_s3_bucket_object.user_student_alias_object: Destroying... [id=student.alias]
- aws_s3_bucket_object.user_student_alias_object: Destruction complete after 0s
+ aws_s3_object.user_student_alias_object: Destroying... [id=student.alias]
+ aws_s3_object.user_student_alias_object: Destruction complete after 0s
 
  Destroy complete! Resources: 1 destroyed.
  ```

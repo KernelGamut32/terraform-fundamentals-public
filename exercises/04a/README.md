@@ -30,7 +30,7 @@ aws_instance.web: Refreshing state... [id=INSTANCE_ID]
 
 where `INSTANCE_ID` is the ID you noted above.
 
-Now run the same exact code elsewhere, e.g., on your own local machine. you don't have terraform installed locally,
+Now run the same exact code elsewhere, e.g., on your own local machine. If you don't have terraform installed locally,
 you can just `cd` into the `elsewhere` directory which is intended to have the exact same Terraform code in it. Copy the contents of
 `main.tf` from the `04a` root folder into the contents of `main.tf` in the `elsewhere` subfolder; repeat for `variables.tf`.
 

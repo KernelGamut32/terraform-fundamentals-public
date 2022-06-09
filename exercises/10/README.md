@@ -134,8 +134,8 @@ terraform apply plan.out
 You should get something similar to below:
 
 ```
-aws_s3_bucket_object.user_student_alias_object: Creating...
-aws_s3_bucket_object.user_student_alias_object: Creation  complete after 1s [id=student.alias]
+aws_s3_object.user_student_alias_object: Creating...
+aws_s3_object.user_student_alias_object: Creation  complete after 1s [id=student.alias]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
